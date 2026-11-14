@@ -8,14 +8,38 @@ const navItems = [
   { label: 'About', href: '#about' },
 ]
 
-const skills = {
-  'Frontend': ['HTML', 'CSS', 'JavaScript', 'React', 'Next.js', 'Tailwind CSS'],
-  'Backend': ['Node.js', 'Express.js', 'REST APIs', 'MongoDB'],
-  'MERN Stack': ['MongoDB', 'Express', 'React', 'Node.js'],
-  'AI / ML': ['Python', 'Machine Learning', 'TensorFlow', 'scikit-learn'],
-  'Cloud & Tools': ['AWS', 'Git', 'GitHub', 'Vite', 'Postman'],
-  'Databases': ['MongoDB', 'MySQL', 'PostgreSQL'],
-}
+const skillsData = [
+  {
+    category: 'Frontend',
+    icon: 'code',
+    items: ['HTML', 'CSS', 'JavaScript', 'React', 'Next.js', 'Tailwind CSS'],
+  },
+  {
+    category: 'Backend',
+    icon: 'server',
+    items: ['Node.js', 'Express.js', 'REST APIs', 'MongoDB'],
+  },
+  {
+    category: 'MERN Stack',
+    icon: 'layers',
+    items: ['MongoDB', 'Express', 'React', 'Node.js'],
+  },
+  {
+    category: 'AI / ML',
+    icon: 'cpu',
+    items: ['Python', 'Machine Learning', 'TensorFlow', 'scikit-learn'],
+  },
+  {
+    category: 'Cloud & Tools',
+    icon: 'cloud',
+    items: ['AWS', 'Git', 'GitHub', 'Vite', 'Postman'],
+  },
+  {
+    category: 'Databases',
+    icon: 'database',
+    items: ['MongoDB', 'MySQL', 'PostgreSQL'],
+  },
+]
 
 const projects = [
   {
@@ -72,21 +96,52 @@ const aboutFacts = [
   { label: 'Stack', value: 'MERN + Next.js' },
 ]
 
-/* Card accents (Spotify-style): dark surfaces with one controlled color each */
-const CARD_ACCENTS = ['bg-blue-600', 'bg-red-600', 'bg-green-600', 'bg-fuchsia-600', 'bg-lime-500']
-
-/* Solid dark card with a soft colored glow — restrained, like Spotify */
-function GlowCard({ color, className = '', children }) {
+function Icon({ name, className = 'h-5 w-5' }) {
+  const paths = {
+    code: <path d="m16 18 6-6-6-6M8 6l-6 6 6 6" />,
+    server: (
+      <>
+        <rect x="2" y="2" width="20" height="8" rx="2" />
+        <rect x="2" y="14" width="20" height="8" rx="2" />
+        <path d="M6 6h.01M6 18h.01" />
+      </>
+    ),
+    layers: (
+      <>
+        <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" />
+        <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" />
+        <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" />
+      </>
+    ),
+    cpu: (
+      <>
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="9" y="9" width="6" height="6" />
+        <path d="M15 2v2M15 20v2M9 2v2M9 20v2M2 15h2M2 9h2M20 15h2M20 9h2" />
+      </>
+    ),
+    cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
+    database: (
+      <>
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M3 5v14a9 3 0 0 0 18 0V5" />
+        <path d="M3 12a9 3 0 0 0 18 0" />
+      </>
+    ),
+  }
   return (
-    <div
-      className={`group relative overflow-hidden rounded-2xl bg-[#181818] p-6 shadow-lg ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-white/20 ${className}`}
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
     >
-      <div
-        aria-hidden="true"
-        className={`pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full opacity-25 blur-3xl transition duration-300 group-hover:opacity-45 ${color}`}
-      />
-      <div className="relative">{children}</div>
-    </div>
+      {paths[name]}
+    </svg>
   )
 }
 
@@ -197,7 +252,9 @@ function Navbar() {
                   className={`relative z-10 block rounded-full px-3 py-1.5 transition-colors duration-300 ${
                     isActive
                       ? 'text-slate-900'
-                      : 'text-white/85 hover:text-white'
+                      : scrolled
+                        ? 'text-white/85 hover:text-white'
+                        : 'text-white hover:text-white/85'
                   }`}
                 >
                   {item.label}
@@ -211,30 +268,24 @@ function Navbar() {
   )
 }
 
-function SectionTitle({ title, children }) {
+/* Section heading with a small accent rule synced to the section color */
+function SectionTitle({ title, subtitle, accent = 'bg-white' }) {
   return (
     <div className="mb-12">
-      <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">{title}</h2>
-      {children && (
-        <p className="max-w-2xl leading-relaxed text-slate-200">{children}</p>
+      <h2 className="text-3xl font-bold text-white sm:text-4xl">{title}</h2>
+      <div className={`mt-3 h-1 w-12 rounded-full ${accent}`} />
+      {subtitle && (
+        <p className="mt-4 max-w-2xl leading-relaxed text-slate-400">
+          {subtitle}
+        </p>
       )}
-    </div>
-  )
-}
-
-/* Ambient color blobs that the glass panes refract */
-function AmbientBlobs() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-red-500/25 blur-3xl" />
-      <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-amber-400/20 blur-3xl" />
     </div>
   )
 }
 
 function App() {
   return (
-    <div>
+    <div className="bg-black">
       <Navbar />
 
       {/* Home */}
@@ -258,136 +309,151 @@ function App() {
           <div className="mt-8 flex flex-wrap gap-4">
             <a
               href="#projects"
-              className="rounded-full bg-sky-600/90 px-6 py-3 font-medium shadow-lg transition hover:bg-sky-500 active:scale-95"
+              className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-slate-950 shadow-lg transition hover:bg-white/90 active:scale-95"
             >
               View Projects
+              <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
             </a>
             <a
               href="#about"
-              className="liquid-glass rounded-full px-6 py-3 font-medium transition hover:scale-[1.02] active:scale-95"
+              className="group inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold text-white ring-1 ring-white/40 backdrop-blur-sm transition hover:bg-white/10 active:scale-95"
             >
               About Me
             </a>
           </div>
         </div>
-        {/* Fade the photo's bottom edge into the black gradient */}
+        {/* Fade the photo's bottom edge into the black */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-linear-to-b from-transparent to-black" />
       </section>
 
-      {/* Black from where the photo ends */}
-      <div className="relative overflow-hidden bg-black">
-        <AmbientBlobs />
-
+      {/* Content on black */}
+      <div className="bg-black">
         {/* Skills */}
-        <section id="skills" className="relative mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-          <SectionTitle title="Skills">
-            Tools and technologies I use to bring ideas from a napkin sketch to
-            production.
-          </SectionTitle>
+        <section id="skills" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
+          <SectionTitle
+            title="Skills"
+            accent="bg-[#0037ff]"
+            subtitle="Tools and technologies I use to bring ideas from a napkin sketch to production."
+          />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(skills).map(([category, items], i) => (
-              <GlowCard key={category} color={CARD_ACCENTS[i % CARD_ACCENTS.length]}>
-                <h3 className="mb-4 text-lg font-bold text-white">{category}</h3>
+            {skillsData.map(({ category, icon, items }) => (
+              <div
+                key={category}
+                className="rounded-2xl bg-[#111113] p-6 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-white/25"
+              >
+                <div className="mb-5 flex items-center gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#0037ff]/10 text-[#5c8aff] ring-1 ring-[#0037ff]/30">
+                    <Icon name={icon} />
+                  </span>
+                  <h3 className="text-lg font-bold text-white">{category}</h3>
+                </div>
                 <ul className="flex flex-wrap gap-2">
                   {items.map((skill) => (
                     <li
                       key={skill}
-                      className="rounded-md bg-white/10 px-3 py-1 text-sm font-medium text-white/90"
+                      className="rounded-md bg-white/5 px-3 py-1 text-sm text-white/80 ring-1 ring-white/10"
                     >
                       {skill}
                     </li>
                   ))}
                 </ul>
-              </GlowCard>
+              </div>
             ))}
           </div>
         </section>
 
         {/* Projects */}
-        <section id="projects" className="relative mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-          <SectionTitle title="Projects">
-            A few things I have designed, built, and shipped — from full-stack
-            apps to AI-powered tools.
-          </SectionTitle>
+        <section id="projects" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
+          <SectionTitle
+            title="Projects"
+            accent="bg-amber-500"
+            subtitle="A few things I have designed, built, and shipped — from full-stack apps to AI-powered tools."
+          />
           <div className="grid gap-6 sm:grid-cols-2">
             {projects.map((project, i) => (
-              <GlowCard key={project.title} color={CARD_ACCENTS[i % CARD_ACCENTS.length]} className="flex flex-col">
-                <div className={`mb-4 h-1 w-10 rounded-full ${CARD_ACCENTS[i % CARD_ACCENTS.length]}`} />
+              <article
+                key={project.title}
+                className="flex flex-col rounded-2xl bg-[#111113] p-6 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-white/25"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="font-mono text-sm font-bold text-amber-400">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="h-px flex-1 bg-white/10" />
+                </div>
                 <h3 className="mb-2 text-xl font-bold text-white">
                   {project.title}
                 </h3>
-                <p className="mb-4 leading-relaxed text-white/80">
+                <p className="mb-4 leading-relaxed text-slate-400">
                   {project.description}
                 </p>
                 <ul className="mt-auto flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <li
                       key={tag}
-                      className="rounded-md bg-white/10 px-3 py-1 text-xs font-medium text-white/90"
+                      className="rounded-md bg-white/5 px-3 py-1 text-xs text-white/80 ring-1 ring-white/10"
                     >
                       {tag}
                     </li>
                   ))}
                 </ul>
-              </GlowCard>
+              </article>
             ))}
           </div>
         </section>
 
         {/* Certificates */}
-        <section id="certificates" className="relative mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
-          <SectionTitle title="Certificates">
-            Certifications I have earned along the way to back the practical
-            work with theory.
-          </SectionTitle>
+        <section id="certificates" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
+          <SectionTitle
+            title="Certificates"
+            accent="bg-emerald-500"
+            subtitle="Certifications I have earned along the way to back the practical work with theory."
+          />
           <div className="grid gap-6 md:grid-cols-3">
-            {certificates.map((cert, i) => (
-              <GlowCard key={cert.title} color={CARD_ACCENTS[i % CARD_ACCENTS.length]}>
-                <div className={`mb-4 h-1 w-10 rounded-full ${CARD_ACCENTS[i % CARD_ACCENTS.length]}`} />
-                <div className="mb-3 inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-1 text-xs font-bold text-white">
+            {certificates.map((cert) => (
+              <article
+                key={cert.title}
+                className="rounded-2xl bg-[#111113] p-6 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-white/25"
+              >
+                <div className="mb-4 inline-flex items-center gap-2 rounded-md bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 ring-1 ring-emerald-500/30">
                   <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m9 12.75 2.25 2.25L15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                   </svg>
                   Verified
                 </div>
                 <h3 className="mb-1 font-bold text-white">{cert.title}</h3>
-                <p className="mb-3 text-sm font-bold text-white/90">{cert.issuer}</p>
-                <p className="text-sm leading-relaxed text-white/80">
+                <p className="mb-3 text-sm text-emerald-300/90">{cert.issuer}</p>
+                <p className="text-sm leading-relaxed text-slate-400">
                   {cert.description}
                 </p>
-              </GlowCard>
+              </article>
             ))}
           </div>
         </section>
 
         {/* About */}
-        <section id="about" className="relative mx-auto max-w-6xl scroll-mt-24 px-6 py-24 pb-32">
-          <SectionTitle title="About">
-            Hi, I am Jim Halpert — a full-stack developer who recently graduated
-            from Rungta College of Engineering and Technology (RCET), Bhilai,
-            with a B.Tech in Computer Science and Engineering (Artificial
-            Intelligence &amp; Machine Learning). During college I fell in love
-            with web development and went deep into the MERN stack and Next.js,
-            building everything from task managers to e-commerce stores. I am
-            equally comfortable wiring up a database schema, designing a REST
-            API, or fine-tuning a front-end until it feels effortless. When I am
-            not coding, you will probably find me experimenting with new AI
-            tools, exploring cloud platforms, or planning my next mountain trip.
-            I am looking for opportunities where I can build products people
-            genuinely enjoy using.
-          </SectionTitle>
+        <section id="about" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24 pb-32">
+          <SectionTitle
+            title="About"
+            accent="bg-violet-500"
+            subtitle="Hi, I am Jim Halpert — a full-stack developer who recently graduated from Rungta College of Engineering and Technology (RCET), Bhilai, with a B.Tech in Computer Science and Engineering (Artificial Intelligence & Machine Learning). During college I fell in love with web development and went deep into the MERN stack and Next.js, building everything from task managers to e-commerce stores. I am equally comfortable wiring up a database schema, designing a REST API, or fine-tuning a front-end until it feels effortless. When I am not coding, you will probably find me experimenting with new AI tools, exploring cloud platforms, or planning my next mountain trip. I am looking for opportunities where I can build products people genuinely enjoy using."
+          />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {aboutFacts.map((fact, i) => (
-              <GlowCard key={fact.label} color={CARD_ACCENTS[i % CARD_ACCENTS.length]}>
-                <div className={`mb-3 h-1 w-10 rounded-full ${CARD_ACCENTS[i % CARD_ACCENTS.length]}`} />
-                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-white/70">
+            {aboutFacts.map((fact) => (
+              <div
+                key={fact.label}
+                className="rounded-2xl bg-[#111113] p-6 ring-1 ring-white/10 transition duration-300 hover:-translate-y-1 hover:ring-white/25"
+              >
+                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-white/60">
                   {fact.label}
                 </p>
                 <p className="font-bold text-white">{fact.value}</p>
-              </GlowCard>
+              </div>
             ))}
           </div>
-          <footer className="mt-24 text-center text-sm text-white/50">
+          <footer className="mt-24 border-t border-white/10 pt-8 text-center text-sm text-white/50">
             © {new Date().getFullYear()} Jim Halpert · Built with React &amp; Tailwind CSS
           </footer>
         </section>
